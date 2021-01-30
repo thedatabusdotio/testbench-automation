@@ -54,23 +54,23 @@ def truncate(number, digits) -> float:
     return math.trunc(stepper * number) / stepper
 
 def get_rand():
-	e = np.random.randint(0,11)%2
-	n = np.random.uniform(-0.5,-0.006,1)
-	p = np.random.uniform(0.006,0.5,1)
-	if(e == 0):
-		return n
-	else:
-		return p
-		
-N = 16           #Total bitwidth of each number
-Q = 12           #Number of bits allotted to represent the fractonal part
+    e = np.random.randint(0,11)%2
+    n = np.random.uniform(-0.5,-0.006,1)
+    p = np.random.uniform(0.006,0.5,1)
+    if(e == 0):
+        return n
+    else:
+        return p
+        
+N = 32           #Total bitwidth of each number
+Q = 27           #Number of bits allotted to represent the fractonal part
 I = N-Q-1        #Number of bits allotted to represent the integral part
-NoT = 1#0000
+NoT = 10000
 
 for i in range(NoT):
-    a = get_rand() #np.random.uniform(-0.5,0.5,1) #
-    b = get_rand() #np.random.uniform(-0.5,0.5,1) #
-    c = get_rand() #np.random.uniform(-0.5,0.5,1) #
+    a = np.random.uniform(-0.5,0.5,1) #get_rand() #
+    b = np.random.uniform(-0.5,0.5,1) #get_rand() #
+    c = np.random.uniform(-0.5,0.5,1) #get_rand() #
 
     p_golden = a[0]*b[0] + c[0]
     p_golden_trunc = truncate(p_golden,2)
@@ -85,7 +85,7 @@ for i in range(NoT):
     ip_file.write(format(c_fp)+"\n")
     ip_file.close()
 
-    os.system("iverilog -o mac_manual.vvp mac_manual_tb.v qadd.v qmult.v")
+    os.system("iverilog -o mac_manual.vvp -DN=" + str(N) + " -DQ=" + str(Q) + " -DFIXED_POINT mac_manual_tb.v qmult.v qadd.v")
     os.system("vvp mac_manual.vvp ")
 
     op_file = open('output.txt','r')
@@ -94,14 +94,14 @@ for i in range(NoT):
     op_file.close()
 
     if(abs(abs(p_golden_trunc) - abs(p_practical_trunc)) < 0.05): #p_golden_trunc == p_practical_trunc):
-    	print('test_passed')
+        print('test_passed')
     else:
-    	print('test_failed')
-    	print(' a =',a_fp, '=', a[0])
-    	print(' b =',b_fp, '=', b[0])
-    	print(' c =',c_fp, '=', c[0])
-    	print('p_golden =' ,p_golden_trunc)
-    	print('p_practical =' ,p_practical_trunc) #fp_to_float(p_practical[:-1],3,12))
-    	print(abs(abs(p_golden_trunc) - abs(p_practical_trunc)))
-    	break
+        print('test_failed')
+        print(' a =',a_fp, '=', a[0])
+        print(' b =',b_fp, '=', b[0])
+        print(' c =',c_fp, '=', c[0])
+        print('p_golden =' ,p_golden_trunc)
+        print('p_practical =' ,p_practical_trunc) #fp_to_float(p_practical[:-1],3,12))
+        print(abs(abs(p_golden_trunc) - abs(p_practical_trunc)))
+        break
 

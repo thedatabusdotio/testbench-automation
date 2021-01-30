@@ -1,17 +1,16 @@
 `timescale 1ns / 1ps
 `include "mac_manual.v"
-//`define N 16
-//`define Q 12
-module mac_manual_tb #(parameter N=16,parameter Q=12)();//();
+
+module mac_manual_tb ();
 
     reg clk,rst,ce;
-    reg [N-1:0] a;
-    reg [N-1:0] b;
-    reg [N-1:0] c;
-    wire [N-1:0] p;
+    reg [`N-1:0] a;
+    reg [`N-1:0] b;
+    reg [`N-1:0] c;
+    wire [`N-1:0] p;
     integer ip_file,op_file,r3,r4,r5,r6;
 
-mac_manual #(N,Q) a1(clk,rst,ce,a,b,c,p);
+mac_manual #(`N,`Q) a1(clk,rst,ce,a,b,c,p);
 
 initial begin
 
